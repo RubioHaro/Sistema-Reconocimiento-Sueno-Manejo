@@ -96,6 +96,10 @@ def Log_Biometric():
     if cap is not None:
         ret, frame = cap.read()
 
+        if not ret:
+            print("Error: no se pudo capturar el frame")
+            return
+
         # Frame Save
         frameSave = frame.copy()
 
@@ -124,7 +128,7 @@ def Log_Biometric():
                 for rostros in res.multi_face_landmarks:
 
                     # Draw Face Mesh
-                    mpDraw.draw_landmarks(frame, rostros, FacemeshObject.FACE_CONNECTIONS, ConfigDraw, ConfigDraw)
+                    mpDraw.draw_landmarks(frame, rostros, FacemeshObject.FACEMESH_CONTOURS, ConfigDraw, ConfigDraw)
 
                     # Extract KeyPoints
                     for id, puntos in enumerate(rostros.landmark):
@@ -327,7 +331,7 @@ def Sign_Biometric():
                 for rostros in res.multi_face_landmarks:
 
                     # Draw Face Mesh
-                    mpDraw.draw_landmarks(frame, rostros, FacemeshObject.FACE_CONNECTIONS, ConfigDraw, ConfigDraw)
+                    mpDraw.draw_landmarks(frame, rostros, FacemeshObject.FACEMESH_CONTOURS, ConfigDraw, ConfigDraw)
 
                     # Extract KeyPoints
                     for id, puntos in enumerate(rostros.landmark):
@@ -542,19 +546,27 @@ def Sign():
     lblVideo.place(x=0, y=0)
 
     # Elegimos la camara
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    cap.set(3, 1280)
-    cap.set(4, 720)
-    Sign_Biometric()
+    # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(0)
+
+    if not cap.isOpened():
+        print("No se pudo abrir la cámara")
+    else:
+        print("Cámara abierta: ", cap.isOpened())
+        cap.set(3, 1280)
+        cap.set(4, 720)
+        Sign_Biometric()
 
 
 # Register Function
 def Log():
-    global RegName, RegUser, RegPass, InputNameReg, InputUserReg, InputPassReg, cap, lblVideo, pantalla2
+    # global RegName, RegUser, RegPass, InputNameReg, InputUserReg, InputPassReg, cap, lblVideo, pantalla2
+    global RegName, RegUser, InputNameReg, InputUserReg, cap, lblVideo, pantalla2
     # Name, User, PassWord
-    RegName, RegUser, RegPass = InputNameReg.get(), InputUserReg.get(), InputPassReg.get()
+    # RegName, RegUser, RegPass = InputNameReg.get(), InputUserReg.get(), InputPassReg.get()
+    RegName, RegUser = InputNameReg.get(), InputUserReg.get()
 
-    if len(RegName) == 0 or len(RegUser) == 0 or len(RegPass) == 0:
+    if len(RegName) == 0 or len(RegUser) == 0:
         # Info incompleted
         print(" FORMULARIO INCOMPLETO ")
 
@@ -581,19 +593,19 @@ def Log():
             # Info
             info.append(RegName)
             info.append(RegUser)
-            info.append(RegPass)
+            # info.append(RegPass)
 
             # Save Info
             f = open(f"{OutFolderPathUser}/{RegUser}.txt", 'w')
             f.writelines(RegName + ',')
-            f.writelines(RegUser + ',')
-            f.writelines(RegPass + ',')
+            f.writelines(RegUser)
+            # f.writelines(RegPass + ',')
             f.close()
 
             # Clean
             InputNameReg.delete(0, END)
             InputUserReg.delete(0, END)
-            InputPassReg.delete(0, END)
+            # InputPassReg.delete(0, END)
 
             # Ventana principal
             pantalla2 = Toplevel(pantalla)
@@ -609,16 +621,22 @@ def Log():
             #lblVideo.place(x=320, y=115)
 
             # Elegimos la camara
-            cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-            cap.set(3, 1280)
-            cap.set(4, 720)
-            Log_Biometric()
+            cap = cv2.VideoCapture(0)
+
+            if not cap.isOpened():
+                print("No se pudo abrir la cámara")
+            else:
+                print("Cámara abierta: ", cap.isOpened())
+
+                cap.set(3, 1280)
+                cap.set(4, 720)
+                Log_Biometric()
 
 
 # Path
-OutFolderPathUser = 'C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/DataBase/Users'
-PathUserCheck = 'C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/DataBase/Users/'
-OutFolderPathFace = 'C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/DataBase/Faces'
+OutFolderPathUser = '/Users/royrubio/dev/EyeTracker/code/usuario'
+PathUserCheck = '/Users/royrubio/dev/EyeTracker/code/usuario'
+OutFolderPathFace = '/Users/royrubio/dev/EyeTracker/code/rostro'
 
 
 # List
@@ -652,26 +670,28 @@ detector = FaceObject.FaceDetection(min_detection_confidence= 0.5, model_selecti
 
 # Img OpenCV
 # Leer imagenes
-img_info = cv2.imread("C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/Info.png")
-img_check = cv2.imread("C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/check.png")
-img_step0 = cv2.imread("C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/Step0.png")
-img_step1 = cv2.imread("C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/Step1.png")
-img_step2 = cv2.imread("C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/Step2.png")
-img_liche = cv2.imread("C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/LivenessCheck.png")
+img_info = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Info.png")
+img_check = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/check.png")
+img_step0 = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Step0.png")
+img_step1 = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Step1.png")
+img_step2 = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Step2.png")
+img_liche = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/LivenessCheck.png")
 
 
 # Ventana principal
 pantalla = Tk()
 pantalla.title("FACE RECOGNITION SYSTEM")
 pantalla.geometry("1280x720")
+pantalla.resizable(False, False)
+
 
 # Fondo
-imagenF = PhotoImage(file="C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/Inicio.png")
+imagenF = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Inicio.png")
 background = Label(image = imagenF, text = "Inicio")
 background.place(x = 0, y = 0, relwidth = 1, relheight = 1)
 
 # Fondo 2
-imagenB = PhotoImage(file="C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/Back2.png")
+imagenB = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Back2.png")
 
 # Input Text
 # Register
@@ -682,19 +702,19 @@ InputNameReg.place(x= 110, y = 320)
 InputUserReg = Entry(pantalla)
 InputUserReg.place(x= 110, y = 430)
 # Pass
-InputPassReg = Entry(pantalla)
-InputPassReg.place(x= 110, y = 540)
+# InputPassReg = Entry(pantalla)
+# InputPassReg.place(x= 110, y = 540)
 
 # Botones
 # Registro
-imagenBR = PhotoImage(file="C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/BtSign.png")
+imagenBR = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/BtSign.png")
 BtReg = Button(pantalla, text="Registro", image=imagenBR, height="40", width="200", command=Log)
-BtReg.place(x = 300, y = 580)
+BtReg.place(x = 110, y = 500)
 
-# Inicio de sesion
-imagenBL = PhotoImage(file="C:/Users/santi/OneDrive/Desktop/YouTube/Programacion/Vision Python/FaceRecognitionLivenessSystem/SetUp/BtLogin.png")
-BtSign = Button(pantalla, text="Sign", image=imagenBL, height="40", width="200", command=Sign)
-BtSign.place(x = 850, y = 580)
+# # Inicio de sesion
+# imagenBL = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/BtLogin.png")
+# BtSign = Button(pantalla, text="Sign", image=imagenBL, height="40", width="200", command=Sign)
+# BtSign.place(x = 850, y = 580)
 
 # Eject
 pantalla.mainloop()
