@@ -76,13 +76,19 @@ def Profile():
         PosUserImg = clases.index(User)
         UserImg = images[PosUserImg]
 
-        ImgUser = Image.fromarray(UserImg)
-        #
+         # Correct Image Loading and Conversion
         ImgUser = cv2.imread(f"{OutFolderPathFace}/{User}.png")
-        ImgUser = cv2.cvtColor(ImgUser, cv2.COLOR_RGB2BGR)
+        ImgUser = cv2.cvtColor(ImgUser, cv2.COLOR_BGR2RGB)  # Convert to RGB
         ImgUser = Image.fromarray(ImgUser)
-        #
         IMG = ImageTk.PhotoImage(image=ImgUser)
+
+        # ImgUser = Image.fromarray(UserImg)
+        # #
+        # ImgUser = cv2.imread(f"{OutFolderPathFace}/{User}.png")
+        # ImgUser = cv2.cvtColor(ImgUser, cv2.COLOR_RGB2BGR)
+        # ImgUser = Image.fromarray(ImgUser)
+        # #
+        # IMG = ImageTk.PhotoImage(image=ImgUser)
 
         lblImgUser.configure(image=IMG)
         lblImgUser.image = IMG
@@ -277,8 +283,14 @@ def Log_Biometric():
             # Rendimensionamos el video
             frame = imutils.resize(frame, width=1280)
 
+
+            # Convertimos el video *TO RGB* before creating ImageTk
+            # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # The crucial line
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+
             # Convertimos el video
-            im = Image.fromarray(frame)
+            im = Image.fromarray(frame_rgb)
             img = ImageTk.PhotoImage(image=im)
 
             # Mostramos en el GUI
@@ -292,6 +304,11 @@ def Log_Biometric():
 # Sign Biometric
 def Sign_Biometric():
     global pantalla, pantalla3, conteo, parpadeo, img_info, step, UserName, prueba
+
+    tiempo_inicio = time.time()  # Tiempo en que se inició el seguimiento
+    tiempo_sin_parpadear = 0  # Tiempo acumulado sin parpadear
+    parpadeando = False  # Variable para indicar si se está parpadeando
+    mostrar_imagen = False  # Variable para controlar si se muestra la imagen
 
     # Leemos la videocaptura
     if cap is not None:
@@ -437,8 +454,17 @@ def Sign_Biometric():
                                                     conteo = conteo + 1
                                                     parpadeo = True
 
+                                                    if not parpadeando:
+                                                        parpadeando = True
+                                                        tiempo_sin_parpadear = 0  # Reiniciar el tiempo sin parpadear
+                                                        tiempo_inicio = time.time()  # Reiniciar el tiempo de inicio
+
+                                                elif longitud1 > 10 and longitud2 > 10:  # Ojos abiertos
+                                                    parpadeando = False
+
                                                 elif longitud2 > 10 and longitud2 > 10 and parpadeo == True:  # Seguridad parpadeo
                                                     parpadeo = False
+
 
                                                 # IMG check
                                                 alich, anich, c = img_check.shape
@@ -449,8 +475,16 @@ def Sign_Biometric():
                                                 cv2.putText(frame, f'Parpadeos: {int(conteo)}', (1070, 375),
                                                             cv2.FONT_HERSHEY_COMPLEX, 0.5,
                                                             (255, 255, 255), 1)
+                                                
+
 
                                                 if conteo >= 3:
+                                                    if not parpadeando:
+                                                        tiempo_sin_parpadear = time.time() - tiempo_inicio
+
+                                                    if tiempo_sin_parpadear >= 120:  # 120 segundos = 2 minutos
+                                                        mostrar_imagen = True
+
                                                     # IMG check
                                                     alich, anich, c = img_check.shape
                                                     frame[385:385 + alich, 1105:1105 + anich] = img_check
@@ -498,8 +532,11 @@ def Sign_Biometric():
             # Rendimensionamos el video
             frame = imutils.resize(frame, width=1280)
 
+            #Convertimos el video *TO RGB* before creating ImageTk
+            # frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  # The crucial line
+
             # Convertimos el video
-            im = Image.fromarray(frame)
+            im = Image.fromarray(frame_rgb)
             img = ImageTk.PhotoImage(image=im)
 
             # Mostramos en el GUI
