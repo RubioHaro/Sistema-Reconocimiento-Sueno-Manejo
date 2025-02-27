@@ -671,9 +671,11 @@ def Log():
 
 
 # Path
-OutFolderPathUser = '/Users/royrubio/dev/EyeTracker/code/usuario'
-PathUserCheck = '/Users/royrubio/dev/EyeTracker/code/usuario'
-OutFolderPathFace = '/Users/royrubio/dev/EyeTracker/code/rostro'
+base_route= "/Users/rubioro/Desktop/coding/Sistema-Reconocimiento-Sueno-Manejo"
+
+OutFolderPathUser = base_route + '/reports/usuario'
+PathUserCheck = base_route + '/reports/usuario'
+OutFolderPathFace = base_route + '/reports/rostro'
 
 
 # List
@@ -707,12 +709,14 @@ detector = FaceObject.FaceDetection(min_detection_confidence= 0.5, model_selecti
 
 # Img OpenCV
 # Leer imagenes
-img_info = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Info.png")
-img_check = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/check.png")
-img_step0 = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Step0.png")
-img_step1 = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Step1.png")
-img_step2 = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Step2.png")
-img_liche = cv2.imread("/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/LivenessCheck.png")
+setup_route = base_route + "/SetUp"
+
+img_info = cv2.imread(setup_route + "/Info.png")
+img_check = cv2.imread(setup_route + "/check.png")
+img_step0 = cv2.imread(setup_route + "/Step0.png")
+img_step1 = cv2.imread(setup_route + "/Step1.png")
+img_step2 = cv2.imread(setup_route + "/Step2.png")
+img_liche = cv2.imread(setup_route + "/LivenessCheck.png")
 
 
 # Ventana principal
@@ -723,12 +727,12 @@ pantalla.resizable(False, False)
 
 
 # Fondo
-imagenF = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Inicio.png")
+imagenF = PhotoImage(file=setup_route + "/Inicio.png")
 background = Label(image = imagenF, text = "Inicio")
 background.place(x = 0, y = 0, relwidth = 1, relheight = 1)
 
 # Fondo 2
-imagenB = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/Back2.png")
+imagenB = PhotoImage(file=setup_route + "/Back2.png")
 
 # Input Text
 # Register
@@ -744,12 +748,12 @@ InputUserReg.place(x= 110, y = 430)
 
 # Botones
 # Registro
-imagenBR = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/BtSign.png")
+imagenBR = PhotoImage(file=setup_route + "/BtSign.png")
 BtReg = Button(pantalla, text="Registro", image=imagenBR, height="40", width="200", command=Log)
 BtReg.place(x = 110, y = 500)
 
 # # Inicio de sesion
-# imagenBL = PhotoImage(file="/Users/royrubio/dev/EyeTracker/code/Sistema-de-reconocimiento-facial-y-Liveness/SetUp/BtLogin.png")
+# imagenBL = PhotoImage(file=setup_route + "/BtLogin.png")
 # BtSign = Button(pantalla, text="Sign", image=imagenBL, height="40", width="200", command=Sign)
 # BtSign.place(x = 850, y = 580)
 
